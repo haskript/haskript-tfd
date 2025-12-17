@@ -1,0 +1,32 @@
+indentation: 4
+column-limit: 80
+function-arrows: leading-args
+comma-style: leading
+import-export-style: diff-friendly
+import-grouping: legacy
+indent-wheres: false
+record-brace-space: false
+newlines-between-decls: 1
+haddock-style: multi-line
+haddock-style-module: null
+haddock-location-signature: auto
+let-style: auto
+in-style: right-align
+if-style: indented
+single-constraint-parens: always
+single-deriving-parens: always
+sort-constraints: false
+sort-derived-classes: false
+sort-deriving-clauses: false
+trailing-section-operators: true
+# Output Unicode syntax (choices: detect, always, or never)
+unicode: never
+# Give the programmer more choice on where to insert blank lines
+respectful: true
+# Fixity information for operators
+fixities: []
+# Module reexports Fourmolu should know about
+reexports: []
+# Modules defined by the current Cabal package for import grouping
+local-modules: []
+

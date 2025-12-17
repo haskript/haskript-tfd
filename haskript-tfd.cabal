@@ -19,7 +19,13 @@ common warnings
 
 library
     import:           warnings
-    exposed-modules:  MyLib
+    exposed-modules:
+        Haskript.GraphicsUI.TFD.IOActions
+        Haskript.GraphicsUI.TFD.LibraryQueries
+    c-sources:
+        cbits/tinyfiledialogs.c
+    include-dirs:
+        cbits/
     -- other-modules:
     -- other-extensions:
     build-depends:    base ^>=4.21.0.0
