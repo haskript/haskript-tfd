@@ -11,6 +11,10 @@ module Haskript.GraphicsUI.TFD.IOActions (
     unsanitizedMessageBox,
 ) where
 
+import Haskript.GraphicsUI.TFD.IOActions.Beep (
+    beep,
+ )
+
 import Foreign.C.String (
     CString,
     withCString,
@@ -18,14 +22,9 @@ import Foreign.C.String (
 import Foreign.C.Types (
     CInt (..),
  )
+import Foreign.Ptr (nullPtr)
 
 -- CInt
-
-foreign import capi safe "tinyfiledialogs.h tinyfd_beep" c_beep :: IO ()
-
--- | Triggers system beep.
-beep :: IO ()
-beep = c_beep
 
 foreign import capi safe "tinyfiledialogs.h tinyfd_notifyPopup"
     c_notify_popup :: CString -> CString -> CString -> IO CInt
@@ -47,11 +46,14 @@ notifyPopup ::
     -- ^ Notification Icon, TFDNotifyInfo, TFDNotifyError
     -> IO Int
 notifyPopup title message iconType =
-    withCString title \cTitle ->
-        withCString message \cMessage ->
+    -- fourmolu: off
+    withNullable title \cTitle ->
+        withNullable message \cMessage ->
             withCString convertedIconType \cIconType ->
                 fromIntegral <$> c_notify_popup cTitle cMessage cIconType
   where
+    -- fourmolu: on
+
     convertedIconType = case iconType of
         TFDNotifyInfo -> "info"
         TFDNotifyWarning -> "warning"
@@ -65,6 +67,13 @@ foreign import capi safe "tinyfiledialogs.h tinyfd_messageBox"
         -> CString
         -> CInt
         -> IO CInt
+
+-- | Helper to handle empty strings.
+withNullable :: String -> (CString -> IO a) -> IO a
+withNullable string cont =
+    if null string
+        then cont nullPtr
+        else withCString string cont
 
 -- | Message box dialogue type constructors to avoid raw text.
 data TFDMBDialogType
@@ -106,12 +115,16 @@ unsanitizedMessageBox ::
     -> IO (Int `Either` TFDMBButton)
     -- ^ On failure, returns the error code.
 unsanitizedMessageBox title message dialogType iconType defaultButton =
-    withCString title \cTitle ->
-        withCString message \cMessage ->
+    -- fourmolu: off
+    withNullable title \cTitle ->
+        withNullable message \cMessage ->
             withCString convertedDialogType \cDialogType ->
                 withCString convertedIconType \cIconType ->
-                    convertToEither <$> c_message_box cTitle cMessage cDialogType cIconType convertedDefaultButton
+                    convertToEither
+                        <$> c_message_box cTitle cMessage cDialogType cIconType convertedDefaultButton
   where
+    -- fourmolu: on
+
     convertedDialogType = case dialogType of
         TFDMBOk -> "ok"
         TFDMBOkCancel -> "okcancel"

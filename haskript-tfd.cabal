@@ -21,12 +21,19 @@ library
     import:           warnings
     exposed-modules:
         Haskript.GraphicsUI.TFD.IOActions
+        Haskript.GraphicsUI.TFD.IOActions.Beep
         Haskript.GraphicsUI.TFD.LibraryQueries
+        Haskript.GraphicsUI.TFD.Types
+    other-modules:
+        Haskript.GraphicsUI.TFD.Internal.FFI
+        Haskript.GraphicsUI.TFD.Internal.GlobalMutex
     c-sources:
         cbits/tinyfiledialogs.c
     include-dirs:
         cbits/
-    -- other-modules:
+    cc-options:
+        -Wno-incompatible-pointer-types-discards-qualifiers
+ 
     -- other-extensions:
     build-depends:    base ^>=4.21.0.0
     hs-source-dirs:   src
@@ -34,6 +41,7 @@ library
 
 test-suite haskript-tfd-test
     import:           warnings
+    ghc-options:      -threaded -with-rtsopts=-N4
     default-language: GHC2024
     -- other-modules:
     -- other-extensions:
